@@ -1,0 +1,29 @@
+{
+  "name": "Geforce Steam",
+  "description": "Shows if you can play games in Geforce Now while you are in steam website",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": ["storage", "activeTab", "scripting"],
+  "content_scripts": [
+    {
+      "matches": ["https://store.steampowered.com/search/*"],
+      "css": ["extstyles.css"],
+      "js": ["contentScript.js"]
+    }
+  ],
+  "action": {
+    "default_title": "Gesteam",
+    "default_icon": {
+      "16": "/images/icon16.png",
+      "32": "/images/icon32.png",
+      "48": "/images/icon48.png",
+      "128": "/images/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "/images/icon16.png",
+    "32": "/images/icon32.png",
+    "48": "/images/icon48.png",
+    "128": "/images/icon128.png"
+  }
+}
