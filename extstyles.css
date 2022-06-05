@@ -2,10 +2,9 @@
   background-color: #76b900;
   padding: 2px;
   color: #fff !important;
-  width: 50px;
   height: 25px;
   font-weight: bold;
   font-size: 8px;
   font-family: Helvetica, Arial, sans-serif;
-  top: 0 !important;
+  /* top: 0 !important; */
 }
