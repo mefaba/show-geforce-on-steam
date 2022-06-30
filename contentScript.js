@@ -1,4 +1,40 @@
+function page_constructor() {
+  String.prototype.clearText = function () {
+    return this.replace("’", "'")
+      .replace("–", "-")
+      .replace("®", "")
+      .replace("©", "")
+      .replace("™", "");
+  };
+
+  function nodeObserver(triggerNode, callFunction) {
+    //call callFunction at least once
+    callFunction();
+
+    // Select the node that will be observed for mutations
+    const targetNode = triggerNode;
+
+    // Options for the observer (which mutations to observe)
+    const config = { attributes: true, childList: true, subtree: true };
+
+    // Callback function to execute when mutations are observed
+    const callback = function (mutationList, observer) {
+      //Trigger InsertBanner when new games appears on screen.
+      callFunction();
+    };
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(callback);
+    // Start observing the target node for configured mutations
+    observer.observe(targetNode, config);
+  }
+
+  return Object.freeze({
+    nodeObserver,
+  });
+}
+
 function home_page_constructor() {
+  const { nodeObserver } = page_constructor();
   //create html element that will be injectted to page
   let span = "<span class='geforce-button'>GeforceNow</span>";
 
@@ -8,10 +44,8 @@ function home_page_constructor() {
       const game = gameNode
         .querySelector(".tab_item_name")
         .innerText.toLowerCase()
-        .replace("’", "'")
-        .replace("–", "-")
-        .replace("®", "")
-        .replace("™", "");
+        .clearText();
+
       const gameAvailableOnGeforce = gameTitles.includes(game);
 
       if (gameAvailableOnGeforce) {
@@ -25,33 +59,14 @@ function home_page_constructor() {
       }
     });
   }
-  function triggerInsertion() {
-    //Insert at least once
-    insertBanner();
-
-    // Select the node that will be observed for mutations
-    const targetNode = document.querySelector(".tabarea");
-
-    // Options for the observer (which mutations to observe)
-    const config = { attributes: true, childList: true, subtree: true };
-
-    // Callback function to execute when mutations are observed
-    const callback = function (mutationList, observer) {
-      //Trigger InsertBanner when new games appears on screen.
-      insertBanner();
-    };
-    // Create an observer instance linked to the callback function
-    const observer = new MutationObserver(callback);
-    // Start observing the target node for configured mutations
-    observer.observe(targetNode, config);
-  }
-  triggerInsertion();
+  nodeObserver(document.querySelector(".tabarea"), insertBanner);
 
   return Object.freeze({
     insertBanner,
   });
 }
 function search_page_constructor() {
+  const { nodeObserver } = page_constructor();
   //create html element that will be injectted to page
   let span =
     "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
@@ -61,10 +76,8 @@ function search_page_constructor() {
       const game = gameNode
         .querySelector(".title")
         .textContent.toLowerCase()
-        .replace("’", "'")
-        .replace("–", "-")
-        .replace("®", "")
-        .replace("™", "");
+        .clearText();
+
       if (gameTitles.includes(game)) {
         //Dont insert geforce button if geforceButton already inserted
         let bannerDoesNotExist = !gameNode.querySelector(
@@ -79,41 +92,22 @@ function search_page_constructor() {
       }
     });
   }
-  function triggerInsertion() {
-    // Select the node that will be observed for mutations
-    const targetNode = document.getElementById("search_results");
 
-    // Options for the observer (which mutations to observe)
-    const config = { attributes: true, childList: true, subtree: true };
+  nodeObserver(document.getElementById("search_results"), insertBanner);
 
-    // Callback function to execute when mutations are observed
-    const callback = function (mutationList, observer) {
-      //Trigger InsertBanner when new games appears on screen.
-      insertBanner();
-    };
-    // Create an observer instance linked to the callback function
-    const observer = new MutationObserver(callback);
-    // Start observing the target node for configured mutations
-    observer.observe(targetNode, config);
-  }
-  triggerInsertion();
   return Object.freeze({
     insertBanner,
   });
 }
 
 function game_page_constructor() {
+  const { nodeObserver } = page_constructor();
   //create html element that will be injectted to page
   let span =
     "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
   function insertBanner() {
     const gameNode = document.getElementById("appHubAppName");
-    const game = gameNode.innerText
-      .toLowerCase()
-      .replace("’", "'")
-      .replace("–", "-")
-      .replace("®", "")
-      .replace("™", "");
+    const game = gameNode.innerText.toLowerCase().clearText();
 
     if (gameTitles.includes(game)) {
       //Dont insert geforce button if geforceButton already inserted
@@ -126,31 +120,15 @@ function game_page_constructor() {
     }
   }
 
-  function triggerInsertion() {
-    insertBanner();
-    // Select the node that will be observed for mutations
-    const targetNode = document.getElementById("appHubAppName");
+  nodeObserver(document.getElementById("appHubAppName"), insertBanner);
 
-    // Options for the observer (which mutations to observe)
-    const config = { attributes: true, childList: true, subtree: true };
-
-    // Callback function to execute when mutations are observed
-    const callback = function (mutationList, observer) {
-      //Trigger InsertBanner when new games appears on screen.
-      insertBanner();
-    };
-    // Create an observer instance linked to the callback function
-    const observer = new MutationObserver(callback);
-    // Start observing the target node for configured mutations
-    observer.observe(targetNode, config);
-  }
-  triggerInsertion();
   return Object.freeze({
     insertBanner,
   });
 }
 
 function wishlist_page_constructor() {
+  const { nodeObserver } = page_constructor();
   //create html element that will be injectted to page
   let span =
     "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
@@ -161,10 +139,7 @@ function wishlist_page_constructor() {
         .querySelector(".title")
         .textContent.trim()
         .toLowerCase()
-        .replace("’", "'")
-        .replace("–", "-")
-        .replace("®", "")
-        .replace("™", "");
+        .clearText();
 
       if (gameTitles.includes(game)) {
         //Dont insert geforce button if geforceButton already inserted
@@ -180,25 +155,8 @@ function wishlist_page_constructor() {
     });
   }
 
-  function triggerInsertion() {
-    insertBanner();
-    // Select the node that will be observed for mutations
-    const targetNode = document.getElementById("wishlist_ctn");
+  nodeObserver(document.getElementById("wishlist_ctn"), insertBanner);
 
-    // Options for the observer (which mutations to observe)
-    const config = { attributes: true, childList: true, subtree: true };
-
-    // Callback function to execute when mutations are observed
-    const callback = function (mutationList, observer) {
-      //Trigger InsertBanner when new games appears on screen.
-      insertBanner();
-    };
-    // Create an observer instance linked to the callback function
-    const observer = new MutationObserver(callback);
-    // Start observing the target node for configured mutations
-    observer.observe(targetNode, config);
-  }
-  triggerInsertion();
   return Object.freeze({
     insertBanner,
   });
