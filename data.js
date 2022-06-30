@@ -139,7 +139,7 @@ const gameTitles = [
   "conan exiles",
   "door kickers",
   "7 days to die",
-  "cities: skylines©",
+  "cities: skylines",
   "dying light",
   "killing floor 2",
   "left 4 dead 2",
