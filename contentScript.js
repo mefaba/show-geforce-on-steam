@@ -67,6 +67,7 @@ function home_page_constructor() {
 }
 function search_page_constructor() {
   const { nodeObserver } = page_constructor();
+  /*Insert Geforce Now Button for Each Game payable in Geofrce */
   //create html element that will be injectted to page
   let span =
     "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
@@ -92,11 +93,83 @@ function search_page_constructor() {
       }
     });
   }
+  let isChecked = false;
+  /**Put Geforce Tag to Filter Options on Right Panel */
+  function insertGeforceFilter() {
+    if (isChecked) {
+      removeNonGeforceGamesFromList();
+    }
 
+    const div = `<div id="geforce-filter"   class="tab_filter_control_row geforce-filter" data-param="tags" data-value="" data-loc="Indie">
+		<span   class="tab_filter_control tab_filter_control_include">
+			<span>
+					<span class="tab_filter_control_checkbox"></span>
+					<span class="tab_filter_control_label" style="color:#a3ff00;">
+						Geforce Now				</span>
+					<span class="tab_filter_control_count" style="">1375</span>
+			</span>
+		</span>
+					<span class="tab_filter_control_not" onclick="disableGeforceFilter()" data-icon="https://store.akamai.steamstatic.com/public/images/search_crouton_not.svg" data-loc="Indie" data-clientside="0" data-tooltip-text="Exclude results with this tag" data-gpfocus="item"><img src="https://store.akamai.steamstatic.com/public/images/search_checkbox_not.svg" width="16px" height="16px"></span>
+</div>`;
+    const filterContainer = document.getElementById("TagFilter_Container");
+    if (!document.getElementById("geforce-filter")) {
+      filterContainer.insertAdjacentHTML("afterbegin", div);
+      //add event listener of button
+      const geforceFilterElement = document.getElementById("geforce-filter");
+      geforceFilterElement.addEventListener("click", toggleGeforceFilter, true);
+      if (isChecked) {
+        const checkInputClassList = geforceFilterElement.querySelector(
+          ".tab_filter_control_include"
+        ).classList;
+        checkInputClassList.add("checked");
+      }
+    }
+  }
+  function removeNonGeforceGamesFromList() {
+    //remove node from list
+    const gameNodes = document.querySelectorAll(".search_result_row");
+    gameNodes.forEach((gameNode) => {
+      let bannerDoesNotExist = !gameNode.querySelector(
+        ".responsive_search_name_combined > div > div > .geforce-button"
+      );
+      if (bannerDoesNotExist) {
+        gameNode.style.visibility = "hidden";
+        gameNode.style.height = "0";
+        gameNode.style.margin = "0";
+        gameNode.style.border = "0";
+      }
+    });
+  }
+
+  function toggleGeforceFilter() {
+    const geforceFilterElement = document.getElementById("geforce-filter");
+    if (!geforceFilterElement) {
+      return;
+    }
+    const checkInputClassList = geforceFilterElement.querySelector(
+      ".tab_filter_control_include"
+    ).classList;
+    if (isChecked) {
+      isChecked = false;
+      checkInputClassList.remove("checked");
+      const gameNodes = document.querySelectorAll(".search_result_row");
+      gameNodes.forEach((gameNode) => {
+        gameNode.style.visibility = "visible";
+        gameNode.style.height = "45px";
+        gameNode.style["margin-bottom"] = "5px";
+      });
+    } else {
+      isChecked = true;
+      insertGeforceFilter();
+      checkInputClassList.add("checked");
+    }
+  }
   nodeObserver(document.getElementById("search_results"), insertBanner);
+  nodeObserver(document.getElementById("search_results"), insertGeforceFilter);
 
   return Object.freeze({
     insertBanner,
+    insertGeforceFilter,
   });
 }
 
@@ -165,7 +238,7 @@ function wishlist_page_constructor() {
 function setup() {
   if (window.location.pathname === "/search/") {
     const SearchPage = search_page_constructor();
-    SearchPage.insertBanner;
+    SearchPage.insertGeforceFilter();
   } else if (
     window.location.pathname === "/" ||
     window.location.pathname.includes("/category")
