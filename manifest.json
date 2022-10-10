@@ -1,14 +1,14 @@
 {
   "name": "Show Geforce Now on Steam",
   "description": "Shows if you can play games in Geforce Now while you are in steam website",
-  "version": "1.4",
+  "version": "1.6",
   "manifest_version": 3,
   "permissions": [],
   "content_scripts": [
     {
       "matches": ["https://store.steampowered.com/*"],
       "css": ["extstyles.css"],
-      "js": ["contentScript.js"]
+      "js": ["data.js", "contentScript.js"]
     }
   ],
   "action": {
