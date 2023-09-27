@@ -164,16 +164,15 @@ function search_page_constructor() {
     });
 }
 
-/*function game_page_constructor() {
+function game_page_constructor() {
   const { nodeObserver } = page_constructor();
   //create html element that will be injectted to page
   let span =
-    "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
+    "<span class='geforce-button' style='top:0; margin: 5px; vertical-align: middle'>GeforceNow</span>";
   function insertBanner() {
     const gameNode = document.getElementById("appHubAppName");
-    const game = gameNode.innerText.toLowerCase().clearText();
 
-    if (gameTitles.includes(game)) {
+    if (filterBySteamID(gameNode)) {
       //Dont insert geforce button if geforceButton already inserted
       let bannerDoesNotExist = !gameNode.querySelector(
         "#appHubAppName > .geforce-button"
@@ -189,7 +188,7 @@ function search_page_constructor() {
   return Object.freeze({
     insertBanner,
   });
-}*/
+}
 
 /*function wishlist_page_constructor() {
   const { nodeObserver } = page_constructor();
