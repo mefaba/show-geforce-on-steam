@@ -26,9 +26,9 @@ function page_constructor() {
     });
 }
 
-const filterBySteamID = gameNode => {
-    const steamID = gameNode.getAttribute('data-ds-appid')
-    return steamIdsOnGeForceNow.includes(steamID);
+const isSteamIdOnGeForceNow = gameNode => {
+    const steamID = gameNode.getAttribute('data-ds-appid') // Get the game's Steam ID from its data attribute
+    return steamIdsOnGeForceNow.includes(steamID); // Check it against the list of known IDs
 }
 
 function home_page_constructor() {
@@ -38,7 +38,7 @@ function home_page_constructor() {
 
     function insertBanner() {
         [...document.querySelectorAll(".tab_item")]
-            .filter(filterBySteamID)
+            .filter(isSteamIdOnGeForceNow)
             .forEach(gameNode => {
                 const bannerDoesNotExist = !gameNode.querySelector(
                     ".tab_item_details > .geforce-button"
@@ -66,7 +66,7 @@ function search_page_constructor() {
 
     function insertBanner() {
         [...document.querySelectorAll(".search_result_row")]
-            .filter(filterBySteamID)
+            .filter(isSteamIdOnGeForceNow)
             .forEach(gameNode => {
                 let bannerDoesNotExist = !gameNode.querySelector(
                     ".responsive_search_name_combined > div > div > .geforce-button"
@@ -81,6 +81,7 @@ function search_page_constructor() {
     }
 
     let isChecked = false;
+
     /**Put Geforce Tag to Filter Options on Right Panel */
 
     function insertGeforceFilter() {
@@ -165,65 +166,59 @@ function search_page_constructor() {
 }
 
 function game_page_constructor() {
-  const { nodeObserver } = page_constructor();
-  //create html element that will be injectted to page
-  let span =
-    "<span class='geforce-button' style='top:0; margin: 5px; vertical-align: middle'>GeforceNow</span>";
-  function insertBanner() {
-    const gameNode = document.getElementById("appHubAppName");
+    const {nodeObserver} = page_constructor();
+    //create html element that will be injectted to page
+    let span =
+        "<span class='geforce-button' style='top:0; margin: 5px; vertical-align: middle'>GeforceNow</span>";
 
-    if (filterBySteamID(gameNode)) {
-      //Dont insert geforce button if geforceButton already inserted
-      let bannerDoesNotExist = !gameNode.querySelector(
-        "#appHubAppName > .geforce-button"
-      );
-      if (bannerDoesNotExist) {
-        gameNode.insertAdjacentHTML("beforeend", span);
-      }
+    function insertBanner() {
+        const gameNode = document.getElementById("appHubAppName");
+
+        if (isSteamIdOnGeForceNow(gameNode)) {
+            //Dont insert geforce button if geforceButton already inserted
+            let bannerDoesNotExist = !gameNode.querySelector(
+                "#appHubAppName > .geforce-button"
+            );
+            if (bannerDoesNotExist) {
+                gameNode.insertAdjacentHTML("beforeend", span);
+            }
+        }
     }
-  }
 
-  nodeObserver(document.getElementById("appHubAppName"), insertBanner);
+    nodeObserver(document.getElementById("appHubAppName"), insertBanner);
 
-  return Object.freeze({
-    insertBanner,
-  });
+    return Object.freeze({
+        insertBanner,
+    });
 }
 
-/*function wishlist_page_constructor() {
-  const { nodeObserver } = page_constructor();
-  //create html element that will be injectted to page
-  let span =
-    "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
-  function insertBanner() {
-    const gameNodes = document.querySelectorAll(".wishlist_row");
-    gameNodes.forEach((gameNode) => {
-      let game = gameNode
-        .querySelector(".title")
-        .textContent.trim()
-        .toLowerCase()
-        .clearText();
+function wishlist_page_constructor() {
+    const {nodeObserver} = page_constructor();
+    //create html element that will be injectted to page
+    let span =
+        "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
 
-      if (gameTitles.includes(game)) {
-        //Dont insert geforce button if geforceButton already inserted
-        let bannerDoesNotExist = !gameNode.querySelector(
-          ".platform_icons > .geforce-button"
-        );
+    function insertBanner() {
+        [...document.querySelectorAll(".wishlist_row")]
+            .filter(isSteamIdOnGeForceNow)
+            .forEach((gameNode) => {
+                let bannerDoesNotExist = !gameNode.querySelector(
+                    ".platform_icons > .geforce-button"
+                );
 
-        if (bannerDoesNotExist) {
-          let extensionTagDiv = gameNode.querySelector(".platform_icons");
-          extensionTagDiv.innerHTML += span;
-        }
-      }
+                if (bannerDoesNotExist) {
+                    let extensionTagDiv = gameNode.querySelector(".platform_icons");
+                    extensionTagDiv.innerHTML += span;
+                }
+            });
+    }
+
+    nodeObserver(document.getElementById("wishlist_ctn"), insertBanner);
+
+    return Object.freeze({
+        insertBanner,
     });
-  }
-
-  nodeObserver(document.getElementById("wishlist_ctn"), insertBanner);
-
-  return Object.freeze({
-    insertBanner,
-  });
-}*/
+}
 
 function setup() {
     if (window.location.pathname === "/search/") {
@@ -231,15 +226,16 @@ function setup() {
         SearchPage.insertGeforceFilter();
     } else if (
         window.location.pathname === "/" ||
-        window.location.pathname.includes("/category")
+        window.location.pathname.startsWith("/category")
     ) {
         const HomePage = home_page_constructor();
         HomePage.insertBanner;
-    } else if (window.location.pathname.includes("/app")) {
+    } else if (window.location.pathname.startsWith("/app")) {
         const GamePage = game_page_constructor();
         GamePage.insertBanner;
-    } else if (window.location.pathname.includes("/wishlist")) {
-        wishlist_page_constructor().insertBanner;
+    } else if (window.location.pathname.startsWith("/wishlist")) {
+        const WishListPage = wishlist_page_constructor();
+        WishListPage.insertBanner;
     }
 }
 
