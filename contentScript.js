@@ -28,7 +28,7 @@ function page_constructor() {
 
 const isSteamIdOnGeForceNow = gameNode => {
     const steamID = gameNode.getAttribute('data-ds-appid') // Get the game's Steam ID from its data attribute
-    return steamIdsOnGeForceNow.includes(steamID); // Check it against the list of known IDs
+    return steamIdsOnGeForceNow.has(steamID); // Check it against the list of known IDs
 }
 
 function home_page_constructor() {
