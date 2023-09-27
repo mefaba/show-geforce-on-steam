@@ -14,6 +14,15 @@ const getSteamIds = async () => {
         # Reusable fragment for the body that we want
         fragment queryFields on AppQueryType
         {
+            
+            # We don't need this pagination info anymore since we can just fetch multiple cursors in one query
+            #            numberReturned
+            #
+            #            pageInfo {
+            #                endCursor
+            #                hasNextPage
+            #            }
+
             items {
                 variants
                 {
