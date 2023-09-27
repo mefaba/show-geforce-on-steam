@@ -8,7 +8,7 @@
     {
       "matches": ["https://store.steampowered.com/*"],
       "css": ["extstyles.css"],
-      "js": ["data.js", "contentScript.js", "getSteamIds.js"]
+      "js": ["data.js", "contentScript.js"]
     }
   ],
   "action": {
