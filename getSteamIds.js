@@ -14,13 +14,6 @@ const getSteamIds = async () => {
         # Reusable fragment for the body that we want
         fragment queryFields on AppQueryType
         {
-            numberReturned
-
-            pageInfo {
-                endCursor
-                hasNextPage
-            }
-
             items {
                 variants
                 {
