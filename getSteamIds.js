@@ -5,7 +5,7 @@ const GFN_API_URL = 'https://api-prod.nvidia.com/gfngames/v1/gameList'
 
 /* Fetch the games from Nvidia by requesting several pages of GraphQL results, filtered for Steam support */
 const getSteamIds = async () => {
-    let steamIdsOfGamesOnGeForceNow = new Set();
+    let steamIdsOfGamesOnGeForceNow = new Set()
 
     const fetchGamesQuery = /*GraphQL*/ `
 
@@ -57,13 +57,14 @@ const getSteamIds = async () => {
         method: "POST",
     };
 
-    const fetchGamesResponse = await fetch(GFN_API_URL, fetchConfig);
+    const fetchGamesResponse = await fetch(GFN_API_URL, fetchConfig)
     const responseJSON = await fetchGamesResponse.json()
-    const pages = ["page1", "page2", "page3"]
-    pages.forEach(page => {
-        const gamesOnThisPage = responseJSON.data?.[page].items ?? []
+    if(!responseJSON.data || !responseJSON.data.length) {
+        console.error('Error: No items returned from the API')
+    }
 
-        gamesOnThisPage.forEach((game) => {
+    Object.values(responseJSON.data).forEach(page => {
+        page.items.forEach((game) => {
             if (!game.variants[0]?.storeId) {
                 return
             }
