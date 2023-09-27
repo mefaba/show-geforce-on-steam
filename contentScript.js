@@ -84,6 +84,8 @@ function search_page_constructor() {
     /**Put Geforce Tag to Filter Options on Right Panel */
 
     function insertGeforceFilter() {
+        // TODO Add "Exclude tag" functionality
+        // TODO Add proper count of filtered results
         if (isChecked) {
             removeNonGeforceGamesFromList();
         }
