@@ -3,7 +3,7 @@ While officially undocumented, a third-party developer, Ighor July (@JulyIghor a
  */
 const GFN_API_URL = 'https://api-prod.nvidia.com/gfngames/v1/gameList'
 
-/* Make the request and paginate through it until we have all the games */
+/* Fetch the games from Nvidia by requesting several pages of GraphQL results, filtered for Steam support */
 const getSteamIds = async () => {
     let steamIdsOfGamesOnGeForceNow = new Set();
 
