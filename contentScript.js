@@ -62,7 +62,7 @@ function search_page_constructor() {
     /*Insert Geforce Now Button for Each Game payable in Geofrce */
     //create html element that will be injectted to page
     let span =
-        "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
+        "<span class='geforce-button' style='top:0;'>GeforceNow</span>";
 
     function insertBanner() {
         [...document.querySelectorAll(".search_result_row")]
@@ -93,8 +93,7 @@ function search_page_constructor() {
 			<span>
 					<span class="tab_filter_control_checkbox"></span>
 					<span class="tab_filter_control_label" style="color:#a3ff00;">
-						Geforce Now				</span>
-					<span class="tab_filter_control_count" style="">1375</span>
+						Geforce Now</span>
 			</span>
 		</span>
 					<span class="tab_filter_control_not" onclick="disableGeforceFilter()" data-icon="https://store.akamai.steamstatic.com/public/images/search_crouton_not.svg" data-loc="Indie" data-clientside="0" data-tooltip-text="Exclude results with this tag" data-gpfocus="item"><img src="https://store.akamai.steamstatic.com/public/images/search_checkbox_not.svg" width="16px" height="16px"></span>
