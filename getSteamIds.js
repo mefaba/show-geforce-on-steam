@@ -6,12 +6,12 @@ const GFN_API_URL = 'https://api-prod.nvidia.com/gfngames/v1/gameList'
 
 /* Make the request and paginate through it until we have all the games */
 const getSteamIds = async () => {
-    let nextCursor = '';
     let steamIdsOfGamesOnGeForceNow = new Set();
-
-    const fetchGamesRequestBody = /*GraphQL*/ `
+    let keepPaginating = true;
+    let nextCursor = '';
+    const fetchGamesFromCursor = (cursor = '') => /*GraphQL*/ `
         {
-            apps(country:"US" appStore:"STEAM" first:1300 after:"${nextCursor}") # First can't be more than 1300 or so
+            apps(country:"US" appStore:"STEAM" first:1300 after:"${cursor}") # First can't be more than 1300 or so
             {
                 numberReturned
 
@@ -30,29 +30,35 @@ const getSteamIds = async () => {
         }
     `
 
-    const fetchConfig = {
-        body: fetchGamesRequestBody,
-        method: "POST",
+    const fetchConfig = (cursor = '') => {
+        return {
+            body: fetchGamesFromCursor(cursor),
+            method: "POST",
+        }
     };
 
+    while (keepPaginating) {
+        const fetchGamesResponse = await fetch(GFN_API_URL, fetchConfig(nextCursor));
+        const responseJSON = await fetchGamesResponse.json()
+        const pageInfo = responseJSON.data?.apps?.pageInfo
 
-    const fetchGamesResponse = await fetch(GFN_API_URL, fetchConfig);
-    const responseJSON = await fetchGamesResponse.json()
-    console.info(responseJSON)
+        const gamesOnThisPage = responseJSON.data?.apps?.items ?? []
+        gamesOnThisPage.forEach((game) => {
+            if (!game.variants[0]?.storeId) {
+                return
+            }
+            steamIdsOfGamesOnGeForceNow.add(game.variants[0].storeId)
+        })
 
-    const gamesFetchedSoFar = responseJSON.data?.apps?.items ?? []
-
-    const gamesOnSteam = new Set()
-    gamesFetchedSoFar.forEach((game) => {
-        if (!game.variants[0]?.storeId) {
-            return
+        if (pageInfo.hasNextPage === true && pageInfo.endCursor !== undefined && typeof pageInfo.endCursor === 'string') {
+            nextCursor = pageInfo.endCursor
+        } else {
+            keepPaginating = false;
         }
-        steamIdsOfGamesOnGeForceNow.add(game.variants[0].storeId)
-    })
 
-    const gamesList = Array.from(steamIdsOfGamesOnGeForceNow)
+    }
 
-    console.log(gamesList)
+    return [...steamIdsOfGamesOnGeForceNow]
 }
 
-getSteamIds();
+getSteamIds().then(ids => console.log(JSON.stringify(ids)));
