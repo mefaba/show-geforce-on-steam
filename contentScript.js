@@ -26,6 +26,11 @@ function page_constructor() {
     });
 }
 
+const filterBySteamID = gameNode => {
+    const steamID = gameNode.getAttribute('data-ds-appid')
+    return steamIdsOnGeForceNow.includes(steamID);
+}
+
 function home_page_constructor() {
     const {nodeObserver} = page_constructor();
     //create html element that will be injected to page
@@ -33,10 +38,7 @@ function home_page_constructor() {
 
     function insertBanner() {
         [...document.querySelectorAll(".tab_item")]
-            .filter(gameNode => {
-                const steamID = gameNode.getAttribute('data-ds-appid')
-                return steamIdsOnGeForceNow.includes(steamID);
-            })
+            .filter(filterBySteamID)
             .forEach(gameNode => {
                 const bannerDoesNotExist = !gameNode.querySelector(
                     ".tab_item_details > .geforce-button"
@@ -55,42 +57,38 @@ function home_page_constructor() {
     });
 }
 
-/*function search_page_constructor() {
-  const { nodeObserver } = page_constructor();
-  /!*Insert Geforce Now Button for Each Game payable in Geofrce *!/
-  //create html element that will be injectted to page
-  let span =
-    "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
-  function insertBanner() {
-    const gameNodes = document.querySelectorAll(".search_result_row");
-    gameNodes.forEach((gameNode) => {
-      const game = gameNode
-        .querySelector(".title")
-        .textContent.toLowerCase()
-        .clearText();
+function search_page_constructor() {
+    const {nodeObserver} = page_constructor();
+    /*Insert Geforce Now Button for Each Game payable in Geofrce */
+    //create html element that will be injectted to page
+    let span =
+        "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
 
-      if (gameTitles.includes(game)) {
-        //Dont insert geforce button if geforceButton already inserted
-        let bannerDoesNotExist = !gameNode.querySelector(
-          ".responsive_search_name_combined > div > div > .geforce-button"
-        );
-        if (bannerDoesNotExist) {
-          let extensionTagDiv = gameNode.querySelector(
-            ".responsive_search_name_combined > div > div"
-          );
-          extensionTagDiv.innerHTML += span;
-        }
-      }
-    });
-  }
-  let isChecked = false;
-  /!**Put Geforce Tag to Filter Options on Right Panel *!/
-  function insertGeforceFilter() {
-    if (isChecked) {
-      removeNonGeforceGamesFromList();
+    function insertBanner() {
+        [...document.querySelectorAll(".search_result_row")]
+            .filter(filterBySteamID)
+            .forEach(gameNode => {
+                let bannerDoesNotExist = !gameNode.querySelector(
+                    ".responsive_search_name_combined > div > div > .geforce-button"
+                );
+                if (bannerDoesNotExist) {
+                    let extensionTagDiv = gameNode.querySelector(
+                        ".responsive_search_name_combined > div > div"
+                    );
+                    extensionTagDiv.innerHTML += span;
+                }
+            })
     }
 
-    const div = `<div id="geforce-filter"   class="tab_filter_control_row geforce-filter" data-param="tags" data-value="" data-loc="Indie">
+    let isChecked = false;
+    /**Put Geforce Tag to Filter Options on Right Panel */
+
+    function insertGeforceFilter() {
+        if (isChecked) {
+            removeNonGeforceGamesFromList();
+        }
+
+        const div = `<div id="geforce-filter"   class="tab_filter_control_row geforce-filter" data-param="tags" data-value="" data-loc="Indie">
 		<span   class="tab_filter_control tab_filter_control_include">
 			<span>
 					<span class="tab_filter_control_checkbox"></span>
@@ -101,69 +99,71 @@ function home_page_constructor() {
 		</span>
 					<span class="tab_filter_control_not" onclick="disableGeforceFilter()" data-icon="https://store.akamai.steamstatic.com/public/images/search_crouton_not.svg" data-loc="Indie" data-clientside="0" data-tooltip-text="Exclude results with this tag" data-gpfocus="item"><img src="https://store.akamai.steamstatic.com/public/images/search_checkbox_not.svg" width="16px" height="16px"></span>
 </div>`;
-    const filterContainer = document.getElementById("TagFilter_Container");
-    if (!document.getElementById("geforce-filter")) {
-      filterContainer.insertAdjacentHTML("afterbegin", div);
-      //add event listener of button
-      const geforceFilterElement = document.getElementById("geforce-filter");
-      geforceFilterElement.addEventListener("click", toggleGeforceFilter, true);
-      if (isChecked) {
+        const filterContainer = document.getElementById("TagFilter_Container");
+        if (!document.getElementById("geforce-filter")) {
+            filterContainer.insertAdjacentHTML("afterbegin", div);
+            //add event listener of button
+            const geforceFilterElement = document.getElementById("geforce-filter");
+            geforceFilterElement.addEventListener("click", toggleGeforceFilter, true);
+            if (isChecked) {
+                const checkInputClassList = geforceFilterElement.querySelector(
+                    ".tab_filter_control_include"
+                ).classList;
+                checkInputClassList.add("checked");
+            }
+        }
+    }
+
+    function removeNonGeforceGamesFromList() {
+        //remove node from list
+        const gameNodes = document.querySelectorAll(".search_result_row");
+        gameNodes.forEach((gameNode) => {
+            let bannerDoesNotExist = !gameNode.querySelector(
+                ".responsive_search_name_combined > div > div > .geforce-button"
+            );
+            if (bannerDoesNotExist) {
+                gameNode.style.visibility = "hidden";
+                gameNode.style.height = "0";
+                gameNode.style.margin = "0";
+                gameNode.style.border = "0";
+            }
+        });
+    }
+
+    function toggleGeforceFilter() {
+        const geforceFilterElement = document.getElementById("geforce-filter");
+        if (!geforceFilterElement) {
+            return;
+        }
         const checkInputClassList = geforceFilterElement.querySelector(
-          ".tab_filter_control_include"
+            ".tab_filter_control_include"
         ).classList;
-        checkInputClassList.add("checked");
-      }
+        if (isChecked) {
+            isChecked = false;
+            checkInputClassList.remove("checked");
+            const gameNodes = document.querySelectorAll(".search_result_row");
+            gameNodes.forEach((gameNode) => {
+                gameNode.style.visibility = "visible";
+                gameNode.style.height = "45px";
+                gameNode.style["margin-bottom"] = "5px";
+            });
+        } else {
+            isChecked = true;
+            insertGeforceFilter();
+            checkInputClassList.add("checked");
+        }
     }
-  }
-  function removeNonGeforceGamesFromList() {
-    //remove node from list
-    const gameNodes = document.querySelectorAll(".search_result_row");
-    gameNodes.forEach((gameNode) => {
-      let bannerDoesNotExist = !gameNode.querySelector(
-        ".responsive_search_name_combined > div > div > .geforce-button"
-      );
-      if (bannerDoesNotExist) {
-        gameNode.style.visibility = "hidden";
-        gameNode.style.height = "0";
-        gameNode.style.margin = "0";
-        gameNode.style.border = "0";
-      }
+
+    nodeObserver(document.getElementById("search_results"), insertBanner);
+    nodeObserver(document.getElementById("search_results"), insertGeforceFilter);
+
+    return Object.freeze({
+        insertBanner,
+        insertGeforceFilter,
     });
-  }
-
-  function toggleGeforceFilter() {
-    const geforceFilterElement = document.getElementById("geforce-filter");
-    if (!geforceFilterElement) {
-      return;
-    }
-    const checkInputClassList = geforceFilterElement.querySelector(
-      ".tab_filter_control_include"
-    ).classList;
-    if (isChecked) {
-      isChecked = false;
-      checkInputClassList.remove("checked");
-      const gameNodes = document.querySelectorAll(".search_result_row");
-      gameNodes.forEach((gameNode) => {
-        gameNode.style.visibility = "visible";
-        gameNode.style.height = "45px";
-        gameNode.style["margin-bottom"] = "5px";
-      });
-    } else {
-      isChecked = true;
-      insertGeforceFilter();
-      checkInputClassList.add("checked");
-    }
-  }
-  nodeObserver(document.getElementById("search_results"), insertBanner);
-  nodeObserver(document.getElementById("search_results"), insertGeforceFilter);
-
-  return Object.freeze({
-    insertBanner,
-    insertGeforceFilter,
-  });
 }
 
-function game_page_constructor() {
+/*function game_page_constructor() {
   const { nodeObserver } = page_constructor();
   //create html element that will be injectted to page
   let span =
@@ -188,9 +188,9 @@ function game_page_constructor() {
   return Object.freeze({
     insertBanner,
   });
-}
+}*/
 
-function wishlist_page_constructor() {
+/*function wishlist_page_constructor() {
   const { nodeObserver } = page_constructor();
   //create html element that will be injectted to page
   let span =
