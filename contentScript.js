@@ -1,73 +1,66 @@
 function page_constructor() {
-  String.prototype.clearText = function () {
-    return this.replace("’", "'")
-      .replace("–", "-")
-      .replace("®", "")
-      .replace("©", "")
-      .replace("™", "");
-  };
 
-  function nodeObserver(triggerNode, callFunction) {
-    //call callFunction at least once
-    callFunction();
+    function nodeObserver(triggerNode, callFunction) {
+        //call callFunction at least once
+        callFunction();
 
-    // Select the node that will be observed for mutations
-    const targetNode = triggerNode;
+        // Select the node that will be observed for mutations
+        const targetNode = triggerNode;
 
-    // Options for the observer (which mutations to observe)
-    const config = { attributes: true, childList: true, subtree: true };
+        // Options for the observer (which mutations to observe)
+        const config = {attributes: true, childList: true, subtree: true};
 
-    // Callback function to execute when mutations are observed
-    const callback = function (mutationList, observer) {
-      //Trigger InsertBanner when new games appears on screen.
-      callFunction();
-    };
-    // Create an observer instance linked to the callback function
-    const observer = new MutationObserver(callback);
-    // Start observing the target node for configured mutations
-    observer.observe(targetNode, config);
-  }
+        // Callback function to execute when mutations are observed
+        const callback = function (mutationList, observer) {
+            //Trigger InsertBanner when new games appears on screen.
+            callFunction();
+        };
+        // Create an observer instance linked to the callback function
+        const observer = new MutationObserver(callback);
+        // Start observing the target node for configured mutations
+        observer.observe(targetNode, config);
+    }
 
-  return Object.freeze({
-    nodeObserver,
-  });
+    return Object.freeze({
+        nodeObserver,
+    });
 }
 
 function home_page_constructor() {
-  const { nodeObserver } = page_constructor();
-  //create html element that will be injectted to page
-  let span = "<span class='geforce-button'>GeforceNow</span>";
+    const {nodeObserver} = page_constructor();
+    //create html element that will be injectted to page
+    let span = "<span class='geforce-button'>GeforceNow</span>";
 
-  function insertBanner() {
-    const gameNodes = document.querySelectorAll(".tab_item_content");
-    gameNodes.forEach((gameNode) => {
-      const game = gameNode
-        .querySelector(".tab_item_name")
-        .innerText.toLowerCase()
-        .clearText();
+    function insertBanner() {
+        const gameNodes = document.querySelectorAll(".tab_item");
+        gameNodes.forEach((gameNode) => {
 
-      const gameAvailableOnGeforce = gameTitles.includes(game);
+            const steamID = gameNode.getAttribute('data-ds-appid')
 
-      if (gameAvailableOnGeforce) {
-        let bannerDoesNotExist = !gameNode.querySelector(
-          ".tab_item_details > .geforce-button"
-        );
-        if (bannerDoesNotExist) {
-          let extensionTagDiv = gameNode.querySelector(".tab_item_details");
-          extensionTagDiv.insertAdjacentHTML("afterbegin", span);
-        }
-      }
+            const gameAvailableOnGeforce = steamIdsOnGeForceNow.includes(steamID);
+
+            if (gameAvailableOnGeforce) {
+                let bannerDoesNotExist = !gameNode.querySelector(
+                    ".tab_item_details > .geforce-button"
+                );
+                if (bannerDoesNotExist) {
+                    let extensionTagDiv = gameNode.querySelector(".tab_item_details");
+                    extensionTagDiv.insertAdjacentHTML("afterbegin", span);
+                }
+            }
+        });
+    }
+
+    nodeObserver(document.querySelector(".tabarea"), insertBanner);
+
+    return Object.freeze({
+        insertBanner,
     });
-  }
-  nodeObserver(document.querySelector(".tabarea"), insertBanner);
-
-  return Object.freeze({
-    insertBanner,
-  });
 }
-function search_page_constructor() {
+
+/*function search_page_constructor() {
   const { nodeObserver } = page_constructor();
-  /*Insert Geforce Now Button for Each Game payable in Geofrce */
+  /!*Insert Geforce Now Button for Each Game payable in Geofrce *!/
   //create html element that will be injectted to page
   let span =
     "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
@@ -94,7 +87,7 @@ function search_page_constructor() {
     });
   }
   let isChecked = false;
-  /**Put Geforce Tag to Filter Options on Right Panel */
+  /!**Put Geforce Tag to Filter Options on Right Panel *!/
   function insertGeforceFilter() {
     if (isChecked) {
       removeNonGeforceGamesFromList();
@@ -233,23 +226,24 @@ function wishlist_page_constructor() {
   return Object.freeze({
     insertBanner,
   });
-}
+}*/
 
 function setup() {
-  if (window.location.pathname === "/search/") {
-    const SearchPage = search_page_constructor();
-    SearchPage.insertGeforceFilter();
-  } else if (
-    window.location.pathname === "/" ||
-    window.location.pathname.includes("/category")
-  ) {
-    const HomePage = home_page_constructor();
-    HomePage.insertBanner;
-  } else if (window.location.pathname.includes("/app")) {
-    const GamePage = game_page_constructor();
-    GamePage.insertBanner;
-  } else if (window.location.pathname.includes("/wishlist")) {
-    wishlist_page_constructor().insertBanner;
-  }
+    if (window.location.pathname === "/search/") {
+        const SearchPage = search_page_constructor();
+        SearchPage.insertGeforceFilter();
+    } else if (
+        window.location.pathname === "/" ||
+        window.location.pathname.includes("/category")
+    ) {
+        const HomePage = home_page_constructor();
+        HomePage.insertBanner;
+    } else if (window.location.pathname.includes("/app")) {
+        const GamePage = game_page_constructor();
+        GamePage.insertBanner;
+    } else if (window.location.pathname.includes("/wishlist")) {
+        wishlist_page_constructor().insertBanner;
+    }
 }
+
 setup();
