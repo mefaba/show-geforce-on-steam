@@ -7,58 +7,75 @@ const GFN_API_URL = 'https://api-prod.nvidia.com/gfngames/v1/gameList'
 /* Make the request and paginate through it until we have all the games */
 const getSteamIds = async () => {
     let steamIdsOfGamesOnGeForceNow = new Set();
-    let keepPaginating = true;
-    let nextCursor = '';
-    const fetchGamesFromCursor = (cursor = '') => /*GraphQL*/ `
+
+    const fetchGamesQuery = /*GraphQL*/ `
+
+        # HUGE thanks to @JulyIghor for help optimizing this query!
+
+        # Reusable fragment for the body that we want
+        fragment queryFields on AppQueryType
         {
-            apps(country:"US" appStore:"STEAM" first:1300 after:"${cursor}") # First can't be more than 1300 or so
-            {
-                numberReturned
+            numberReturned
 
-                pageInfo {
-                    endCursor
-                    hasNextPage
-                }
+            pageInfo {
+                endCursor
+                hasNextPage
+            }
 
-                items {
-                    variants
-                    {
-                        storeId
-                    }
+            items {
+                variants
+                {
+                    storeId
                 }
             }
         }
+
+        {
+
+            # Fetch games 0 to 1300
+            page1: apps(country:"US" appStore:"STEAM" first:1300)
+            {
+                ...queryFields
+            }
+
+            # Fetch games 1300 to 2600, though there should only be about 1600 total games as of Sept 2023
+            page2: apps(country:"US" appStore:"STEAM" first:1300 after:"MTMwMA==") # Base64 encoded "1300"
+            {
+                ...queryFields
+            }
+
+            # Future-proofing just in case. GFN probably won't grow by thousands THAT quickly
+            page3: apps(country:"US" appStore:"STEAM" first:1300 after:"MjYwMA==") # Base64 encoded "2600"
+            {
+                ...queryFields
+            }
+
+        }
     `
 
-    const fetchConfig = (cursor = '') => {
-        return {
-            body: fetchGamesFromCursor(cursor),
-            method: "POST",
-        }
+    const fetchConfig = {
+        body: fetchGamesQuery,
+        method: "POST",
     };
 
-    while (keepPaginating) {
-        const fetchGamesResponse = await fetch(GFN_API_URL, fetchConfig(nextCursor));
-        const responseJSON = await fetchGamesResponse.json()
-        const pageInfo = responseJSON.data?.apps?.pageInfo
+    const fetchGamesResponse = await fetch(GFN_API_URL, fetchConfig);
+    const responseJSON = await fetchGamesResponse.json()
+    const pages = ["page1", "page2", "page3"]
+    pages.forEach(page => {
+        const gamesOnThisPage = responseJSON.data?.[page].items ?? []
 
-        const gamesOnThisPage = responseJSON.data?.apps?.items ?? []
         gamesOnThisPage.forEach((game) => {
             if (!game.variants[0]?.storeId) {
                 return
             }
             steamIdsOfGamesOnGeForceNow.add(game.variants[0].storeId)
         })
-
-        if (pageInfo.hasNextPage === true && pageInfo.endCursor !== undefined && typeof pageInfo.endCursor === 'string') {
-            nextCursor = pageInfo.endCursor
-        } else {
-            keepPaginating = false;
-        }
-
-    }
+    })
 
     return [...steamIdsOfGamesOnGeForceNow]
 }
 
-getSteamIds().then(ids => console.log(JSON.stringify(ids)));
+getSteamIds().then(ids => {
+    console.log(JSON.stringify(ids))
+    console.log(`Total games listed: ${ids.length}`)
+});
