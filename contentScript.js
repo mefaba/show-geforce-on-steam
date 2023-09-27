@@ -28,27 +28,24 @@ function page_constructor() {
 
 function home_page_constructor() {
     const {nodeObserver} = page_constructor();
-    //create html element that will be injectted to page
-    let span = "<span class='geforce-button'>GeforceNow</span>";
+    //create html element that will be injected to page
+    const span = "<span class='geforce-button'>GeforceNow</span>";
 
     function insertBanner() {
-        const gameNodes = document.querySelectorAll(".tab_item");
-        gameNodes.forEach((gameNode) => {
-
-            const steamID = gameNode.getAttribute('data-ds-appid')
-
-            const gameAvailableOnGeforce = steamIdsOnGeForceNow.includes(steamID);
-
-            if (gameAvailableOnGeforce) {
-                let bannerDoesNotExist = !gameNode.querySelector(
+        [...document.querySelectorAll(".tab_item")]
+            .filter(gameNode => {
+                const steamID = gameNode.getAttribute('data-ds-appid')
+                return steamIdsOnGeForceNow.includes(steamID);
+            })
+            .forEach(gameNode => {
+                const bannerDoesNotExist = !gameNode.querySelector(
                     ".tab_item_details > .geforce-button"
                 );
                 if (bannerDoesNotExist) {
                     let extensionTagDiv = gameNode.querySelector(".tab_item_details");
                     extensionTagDiv.insertAdjacentHTML("afterbegin", span);
                 }
-            }
-        });
+            })
     }
 
     nodeObserver(document.querySelector(".tabarea"), insertBanner);
