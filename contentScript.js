@@ -26,9 +26,10 @@ function page_constructor() {
     });
 }
 
+/* This simple filter function checks to see if the game's Steam ID is in the list of known GFN games */
 const isSteamIdOnGeForceNow = gameNode => {
     const steamID = gameNode.getAttribute('data-ds-appid') // Get the game's Steam ID from its data attribute
-    return steamIdsOnGeForceNow.has(steamID); // Check it against the list of known IDs
+    return steamIdsOnGeForceNow.has(steamID); // Check it against the list of known IDs, fetched from the GFN Games Page API
 }
 
 function home_page_constructor() {
@@ -37,6 +38,7 @@ function home_page_constructor() {
     const span = "<span class='geforce-button'>GeforceNow</span>";
 
     function insertBanner() {
+        // Iterate through the games and add banners to the GFN ones
         [...document.querySelectorAll(".tab_item")]
             .filter(isSteamIdOnGeForceNow)
             .forEach(gameNode => {
@@ -65,6 +67,7 @@ function search_page_constructor() {
         "<span class='geforce-button' style='top:0;'>GeforceNow</span>";
 
     function insertBanner() {
+        // Iterate through the games and add banners to the GFN ones
         [...document.querySelectorAll(".search_result_row")]
             .filter(isSteamIdOnGeForceNow)
             .forEach(gameNode => {
@@ -199,6 +202,7 @@ function wishlist_page_constructor() {
         "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
 
     function insertBanner() {
+        // Iterate through the games and add banners to the GFN ones
         [...document.querySelectorAll(".wishlist_row")]
             .filter(isSteamIdOnGeForceNow)
             .forEach((gameNode) => {
