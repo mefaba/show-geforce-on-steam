@@ -59,9 +59,6 @@ const getSteamIds = async () => {
 
     const fetchGamesResponse = await fetch(GFN_API_URL, fetchConfig)
     const responseJSON = await fetchGamesResponse.json()
-    if(!responseJSON.data || !responseJSON.data.length) {
-        console.error('Error: No items returned from the API')
-    }
 
     Object.values(responseJSON.data).forEach(page => {
         page.items.forEach((game) => {
