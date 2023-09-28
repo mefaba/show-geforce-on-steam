@@ -1,29 +1,29 @@
 {
-  "name": "Show GeForce Now on Steam",
-  "description": "Shows if you can play games in GeForce Now while you are in steam website",
-  "version": "1.7",
-  "manifest_version": 3,
-  "permissions": [],
-  "content_scripts": [
-    {
-      "matches": ["https://store.steampowered.com/*"],
-      "css": ["extstyles.css"],
-      "js": ["data.js", "contentScript.js"]
+    "name": "Show GeForce Now on Steam",
+    "description": "Shows if you can play games in GeForce Now while you are in steam website",
+    "version": "1.8",
+    "manifest_version": 3,
+    "permissions": [],
+    "content_scripts": [
+        {
+            "matches": ["https://store.steampowered.com/*"],
+            "css": ["extstyles.css"],
+            "js": ["data.js", "contentScript.js"]
+        }
+    ],
+    "action": {
+        "default_title": "Show GeForce Now on Steam",
+        "default_icon": {
+            "16": "/images/icon16.png",
+            "32": "/images/icon32.png",
+            "48": "/images/icon48.png",
+            "128": "/images/icon128.png"
+        }
+    },
+    "icons": {
+        "16": "/images/icon16.png",
+        "32": "/images/icon32.png",
+        "48": "/images/icon48.png",
+        "128": "/images/icon128.png"
     }
-  ],
-  "action": {
-    "default_title": "Show GeForce Now on Steam",
-    "default_icon": {
-      "16": "/images/icon16.png",
-      "32": "/images/icon32.png",
-      "48": "/images/icon48.png",
-      "128": "/images/icon128.png"
-    }
-  },
-  "icons": {
-    "16": "/images/icon16.png",
-    "32": "/images/icon32.png",
-    "48": "/images/icon48.png",
-    "128": "/images/icon128.png"
-  }
 }
