@@ -1,3 +1,6 @@
+// WARNING: Don't include this in manifest.json or it'll auto-execute on every page
+
+
 /* This is the official API used by the GFN Games Page at https://www.nvidia.com/en-us/geforce-now/games/
 While officially undocumented, a third-party developer, Ighor July (@JulyIghor at https://github.com/JulyIghor), documented its inner workings in a blog post: https://ighor.medium.com/i-unlocked-nvidia-geforce-now-and-stumbled-upon-pirates-dc48a3f8ff7
  */
