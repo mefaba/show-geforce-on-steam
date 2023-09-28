@@ -4,11 +4,11 @@
 /* This is the official API used by the GFN Games Page at https://www.nvidia.com/en-us/geforce-now/games/
 While officially undocumented, a third-party developer, Ighor July (@JulyIghor at https://github.com/JulyIghor), documented its inner workings in a blog post: https://ighor.medium.com/i-unlocked-nvidia-geforce-now-and-stumbled-upon-pirates-dc48a3f8ff7
  */
-const GFN_API_URL = 'https://api-prod.nvidia.com/gfngames/v1/gameList'
+const GFN_API_URL = "https://api-prod.nvidia.com/gfngames/v1/gameList";
 
 /* Fetch the games from Nvidia by requesting several pages of GraphQL results, filtered for Steam support */
 const getSteamIds = async () => {
-    let steamIdsOfGamesOnGeForceNow = new Set()
+    let steamIdsOfGamesOnGeForceNow = new Set();
 
     const fetchGamesQuery = /*GraphQL*/ `
 
@@ -55,29 +55,29 @@ const getSteamIds = async () => {
             }
 
         }
-    `
+    `;
 
     const fetchConfig = {
         body: fetchGamesQuery,
         method: "POST",
     };
 
-    const fetchGamesResponse = await fetch(GFN_API_URL, fetchConfig)
-    const responseJSON = await fetchGamesResponse.json()
+    const fetchGamesResponse = await fetch(GFN_API_URL, fetchConfig);
+    const responseJSON = await fetchGamesResponse.json();
 
-    Object.values(responseJSON.data).forEach(page => {
+    Object.values(responseJSON.data).forEach((page) => {
         page.items.forEach((game) => {
             if (!game.variants[0]?.storeId) {
-                return
+                return;
             }
-            steamIdsOfGamesOnGeForceNow.add(game.variants[0].storeId)
-        })
-    })
+            steamIdsOfGamesOnGeForceNow.add(game.variants[0].storeId);
+        });
+    });
 
-    return [...steamIdsOfGamesOnGeForceNow]
-}
+    return [...steamIdsOfGamesOnGeForceNow];
+};
 
-getSteamIds().then(ids => {
-    console.log(JSON.stringify(ids))
-    console.log(`Total games listed: ${ids.length}`)
+getSteamIds().then((ids) => {
+    //console.log(JSON.stringify(ids))
+    //console.log(`Total games listed: ${ids.length}`)
 });
