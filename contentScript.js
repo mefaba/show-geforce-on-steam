@@ -1,5 +1,4 @@
 function page_constructor() {
-
     function nodeObserver(triggerNode, callFunction) {
         //call callFunction at least once
         callFunction();
@@ -27,10 +26,10 @@ function page_constructor() {
 }
 
 /* This simple filter function checks to see if the game's Steam ID is in the list of known GFN games */
-const isSteamIdOnGeForceNow = gameNode => {
-    const steamID = gameNode.getAttribute('data-ds-appid') // Get the game's Steam ID from its data attribute
+const isSteamIdOnGeForceNow = (gameNode) => {
+    const steamID = gameNode.getAttribute("data-ds-appid"); // Get the game's Steam ID from its data attribute
     return steamIdsOnGeForceNow.has(steamID); // Check it against the list of known IDs, fetched from the GFN Games Page API
-}
+};
 
 function home_page_constructor() {
     const {nodeObserver} = page_constructor();
@@ -39,17 +38,13 @@ function home_page_constructor() {
 
     function insertBanner() {
         // Iterate through the games and add banners to the GFN ones
-        [...document.querySelectorAll(".tab_item")]
-            .filter(isSteamIdOnGeForceNow)
-            .forEach(gameNode => {
-                const bannerDoesNotExist = !gameNode.querySelector(
-                    ".tab_item_details > .geforce-button"
-                );
-                if (bannerDoesNotExist) {
-                    let extensionTagDiv = gameNode.querySelector(".tab_item_details");
-                    extensionTagDiv.insertAdjacentHTML("afterbegin", span);
-                }
-            })
+        [...document.querySelectorAll(".tab_item")].filter(isSteamIdOnGeForceNow).forEach((gameNode) => {
+            const bannerDoesNotExist = !gameNode.querySelector(".tab_item_details > .geforce-button");
+            if (bannerDoesNotExist) {
+                let extensionTagDiv = gameNode.querySelector(".tab_item_details");
+                extensionTagDiv.insertAdjacentHTML("afterbegin", span);
+            }
+        });
     }
 
     nodeObserver(document.querySelector(".tabarea"), insertBanner);
@@ -63,24 +58,17 @@ function search_page_constructor() {
     const {nodeObserver} = page_constructor();
     /*Insert Geforce Now Button for Each Game payable in Geofrce */
     //create html element that will be injectted to page
-    let span =
-        "<span class='geforce-button' style='top:0;'>GeforceNow</span>";
+    let span = "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
 
     function insertBanner() {
         // Iterate through the games and add banners to the GFN ones
-        [...document.querySelectorAll(".search_result_row")]
-            .filter(isSteamIdOnGeForceNow)
-            .forEach(gameNode => {
-                let bannerDoesNotExist = !gameNode.querySelector(
-                    ".responsive_search_name_combined > div > div > .geforce-button"
-                );
-                if (bannerDoesNotExist) {
-                    let extensionTagDiv = gameNode.querySelector(
-                        ".responsive_search_name_combined > div > div"
-                    );
-                    extensionTagDiv.innerHTML += span;
-                }
-            })
+        [...document.querySelectorAll(".search_result_row")].filter(isSteamIdOnGeForceNow).forEach((gameNode) => {
+            let bannerDoesNotExist = !gameNode.querySelector(".responsive_search_name_combined > div > div > .geforce-button");
+            if (bannerDoesNotExist) {
+                let extensionTagDiv = gameNode.querySelector(".responsive_search_name_combined > div > div");
+                extensionTagDiv.innerHTML += span;
+            }
+        });
     }
 
     let isChecked = false;
@@ -111,9 +99,7 @@ function search_page_constructor() {
             const geforceFilterElement = document.getElementById("geforce-filter");
             geforceFilterElement.addEventListener("click", toggleGeforceFilter, true);
             if (isChecked) {
-                const checkInputClassList = geforceFilterElement.querySelector(
-                    ".tab_filter_control_include"
-                ).classList;
+                const checkInputClassList = geforceFilterElement.querySelector(".tab_filter_control_include").classList;
                 checkInputClassList.add("checked");
             }
         }
@@ -123,9 +109,7 @@ function search_page_constructor() {
         //remove node from list
         const gameNodes = document.querySelectorAll(".search_result_row");
         gameNodes.forEach((gameNode) => {
-            let bannerDoesNotExist = !gameNode.querySelector(
-                ".responsive_search_name_combined > div > div > .geforce-button"
-            );
+            let bannerDoesNotExist = !gameNode.querySelector(".responsive_search_name_combined > div > div > .geforce-button");
             if (bannerDoesNotExist) {
                 gameNode.style.visibility = "hidden";
                 gameNode.style.height = "0";
@@ -140,9 +124,7 @@ function search_page_constructor() {
         if (!geforceFilterElement) {
             return;
         }
-        const checkInputClassList = geforceFilterElement.querySelector(
-            ".tab_filter_control_include"
-        ).classList;
+        const checkInputClassList = geforceFilterElement.querySelector(".tab_filter_control_include").classList;
         if (isChecked) {
             isChecked = false;
             checkInputClassList.remove("checked");
@@ -171,17 +153,14 @@ function search_page_constructor() {
 function game_page_constructor() {
     const {nodeObserver} = page_constructor();
     //create html element that will be injectted to page
-    let span =
-        "<span class='geforce-button' style='top:0; margin: 5px; vertical-align: middle'>GeforceNow</span>";
+    let span = "<span class='geforce-button' style='top:0; margin: 5px; vertical-align: middle'>GeforceNow</span>";
 
     function insertBanner() {
         const gameNode = document.getElementById("appHubAppName");
 
         if (isSteamIdOnGeForceNow(gameNode)) {
             //Dont insert geforce button if geforceButton already inserted
-            let bannerDoesNotExist = !gameNode.querySelector(
-                "#appHubAppName > .geforce-button"
-            );
+            let bannerDoesNotExist = !gameNode.querySelector("#appHubAppName > .geforce-button");
             if (bannerDoesNotExist) {
                 gameNode.insertAdjacentHTML("beforeend", span);
             }
@@ -198,23 +177,18 @@ function game_page_constructor() {
 function wishlist_page_constructor() {
     const {nodeObserver} = page_constructor();
     //create html element that will be injectted to page
-    let span =
-        "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
+    let span = "<span class='geforce-button vr_supported' style='top:0;'>GeforceNow</span>";
 
     function insertBanner() {
         // Iterate through the games and add banners to the GFN ones
-        [...document.querySelectorAll(".wishlist_row")]
-            .filter(isSteamIdOnGeForceNow)
-            .forEach((gameNode) => {
-                let bannerDoesNotExist = !gameNode.querySelector(
-                    ".platform_icons > .geforce-button"
-                );
+        [...document.querySelectorAll(".wishlist_row")].filter(isSteamIdOnGeForceNow).forEach((gameNode) => {
+            let bannerDoesNotExist = !gameNode.querySelector(".platform_icons > .geforce-button");
 
-                if (bannerDoesNotExist) {
-                    let extensionTagDiv = gameNode.querySelector(".platform_icons");
-                    extensionTagDiv.innerHTML += span;
-                }
-            });
+            if (bannerDoesNotExist) {
+                let extensionTagDiv = gameNode.querySelector(".platform_icons");
+                extensionTagDiv.innerHTML += span;
+            }
+        });
     }
 
     nodeObserver(document.getElementById("wishlist_ctn"), insertBanner);
@@ -228,10 +202,7 @@ function setup() {
     if (window.location.pathname === "/search/") {
         const SearchPage = search_page_constructor();
         SearchPage.insertGeforceFilter();
-    } else if (
-        window.location.pathname === "/" ||
-        window.location.pathname.startsWith("/category")
-    ) {
+    } else if (window.location.pathname === "/" || window.location.pathname.startsWith("/category")) {
         const HomePage = home_page_constructor();
         HomePage.insertBanner;
     } else if (window.location.pathname.startsWith("/app")) {
