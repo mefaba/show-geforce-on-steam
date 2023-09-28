@@ -74,7 +74,7 @@ const getSteamIds = async () => {
     return [...steamIdsOfGamesOnGeForceNow];
 };
 
-getSteamIds().then(ids => {
-    console.log(JSON.stringify(ids))
-    console.log(`Total games listed: ${ids.length}`)
+getSteamIds().then((ids) => {
+    //console.log(JSON.stringify(ids))
+    //console.log(`Total games listed: ${ids.length}`)
 });
