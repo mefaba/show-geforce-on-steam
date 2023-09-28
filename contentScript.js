@@ -26,8 +26,8 @@ function page_constructor() {
 }
 
 /* This simple filter function checks to see if the game's Steam ID is in the list of known GFN games */
-const isSteamIdOnGeForceNow = gameNode => {
-    const steamID = gameNode.getAttribute('data-ds-appid')  ?? gameNode.getAttribute('data-app-id') // Get the game's Steam ID from its data attributes. Most pages use ds-appid, but the wishlist uses app-id
+const isSteamIdOnGeForceNow = (gameNode) => {
+    const steamID = gameNode.getAttribute("data-ds-appid") ?? gameNode.getAttribute("data-app-id") ?? gameNode.getAttribute("data-appid"); // Get the game's Steam ID from its data attributes. Most pages use ds-appid, but the wishlist uses app-id
     return steamIdsOnGeForceNow.has(steamID); // Check it against the list of known IDs, fetched from the GFN Games Page API
 };
 
@@ -153,12 +153,13 @@ function search_page_constructor() {
 function game_page_constructor() {
     const {nodeObserver} = page_constructor();
     //create html element that will be injectted to page
-    let span = "<span class='geforce-button' style='top:0; margin: 5px; vertical-align: middle'>GeforceNow</span>";
+    let span = "<span class='geforce-button vr_supported' style='top:0; margin: 5px; vertical-align: middle'>GeforceNow</span>";
 
     function insertBanner() {
         const gameNode = document.getElementById("appHubAppName");
+        const gameNodeForId = document.querySelector(".popular_tags");
 
-        if (isSteamIdOnGeForceNow(gameNode)) {
+        if (isSteamIdOnGeForceNow(gameNodeForId)) {
             //Dont insert geforce button if geforceButton already inserted
             let bannerDoesNotExist = !gameNode.querySelector("#appHubAppName > .geforce-button");
             if (bannerDoesNotExist) {
