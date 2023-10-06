@@ -7,5 +7,5 @@ jobs:
   update_games:
     runs-on: ubuntu-latest
     steps:
-      - name: "Fetch games from Nvidia's API and then save them to a file"
-        uses: arcataroger/fetch-geforce-now-games@master
+      - name: "Fetch games from Nvidia's API and then save them to latest-geforce-now-games.json"
+        uses: arcataroger/fetch-geforce-now-games@master # This runs a simple JS to fetch the games, then commits them to a file in this repo
