@@ -7,4 +7,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Fetch games
-        uses: arcataroger/fetch-geforce-now-games
+        uses: arcataroger/fetch-geforce-now-games@latest
