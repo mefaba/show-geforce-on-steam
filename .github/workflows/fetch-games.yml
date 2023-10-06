@@ -8,4 +8,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Fetch games from Nvidia's API and then save them to a file"
-        uses: arcataroger/fetch-geforce-now-games@latest
+        uses: arcataroger/fetch-geforce-now-games@0.0.1
