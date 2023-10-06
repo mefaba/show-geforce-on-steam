@@ -1,0 +1,10 @@
+name: "Fetch games and commit"
+on:
+  schedule:
+    - cron: "0 16 * * *"
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch games
+        uses: arcataroger/fetch-geforce-now-games
