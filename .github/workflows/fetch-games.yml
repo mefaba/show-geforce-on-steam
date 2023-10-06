@@ -1,8 +1,8 @@
 name: "Update latest GeForce Now games"
 on:
   schedule:
-    - cron: "0 16 * * *" # Every day at 9am PST, not accounting for DST
-  workflow_dispatch: # On manual run
+    - cron: "0 * * * *" # Run every hour, or about 248 minutes a month @ 20 secs / run. Should be within free limits https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions
+  workflow_dispatch: # Also allow manual runs from Github
 jobs:
   update_games:
     runs-on: ubuntu-latest
