@@ -1,0 +1,11 @@
+name: "Update latest GeForce Now games"
+on:
+ # schedule:
+ #  - cron: "0 * * * *" # Run every hour, or about 248 minutes a month @ 20 secs / run. Should be within free limits https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions
+  workflow_dispatch: # Also allow manual runs from Github
+jobs:
+  update_games:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Fetch games from Nvidia's API and then save them to latest-geforce-now-games.json"
+        uses: arcataroger/fetch-geforce-now-games@master # This runs a simple JS to fetch the games, then commits them to a file in this repo

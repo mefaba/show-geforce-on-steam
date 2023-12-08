@@ -28,7 +28,7 @@ function page_constructor() {
 /* This simple filter function checks to see if the game's Steam ID is in the list of known GFN games */
 const isSteamIdOnGeForceNow = (gameNode) => {
     const steamID = gameNode.getAttribute("data-ds-appid") ?? gameNode.getAttribute("data-app-id") ?? gameNode.getAttribute("data-appid"); // Get the game's Steam ID from its data attributes. Most pages use ds-appid, but the wishlist uses app-id
-    return steamIdsOnGeForceNow.has(steamID); // Check it against the list of known IDs, fetched from the GFN Games Page API
+    return steamIdsOnGeForceNow.has(Number(steamID)); // Check it against the list of known IDs, fetched from the GFN Games Page API
 };
 
 function home_page_constructor() {
